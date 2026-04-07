@@ -4,11 +4,17 @@ import SwiftUI
 public struct DefaultInlineImageProvider: InlineImageProvider {
   public func image(with url: URL, label: String) async throws -> Image {
     let (data, _) = try await URLSession.shared.data(from: url)
+    #if canImport(UIKit)
     guard let uiImage = UIImage(data: data) else {
       throw URLError(.cannotDecodeContentData)
     }
     return Image(uiImage: uiImage)
-      .accessibilityLabel(Text(label))
+    #elseif canImport(AppKit)
+    guard let nsImage = NSImage(data: data) else {
+      throw URLError(.cannotDecodeContentData)
+    }
+    return Image(nsImage: nsImage)
+    #endif
   }
 }
 

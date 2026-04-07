@@ -9,9 +9,8 @@ public struct DefaultImageProvider: ImageProvider {
         Color.clear
           .frame(width: 0, height: 0)
       case .success(let image):
-        ResizeToFit(idealSize: nil) {
-          image.resizable()
-        }
+        image.resizable()
+          .scaledToFit()
       case .failure:
         Color.clear
           .frame(width: 0, height: 0)

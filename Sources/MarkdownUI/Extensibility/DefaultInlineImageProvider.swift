@@ -1,14 +1,14 @@
-import NetworkImage
 import SwiftUI
 
 /// The default inline image provider, which loads images from the network.
 public struct DefaultInlineImageProvider: InlineImageProvider {
   public func image(with url: URL, label: String) async throws -> Image {
-    try await Image(
-      DefaultNetworkImageLoader.shared.image(from: url),
-      scale: 1,
-      label: Text(label)
-    )
+    let (data, _) = try await URLSession.shared.data(from: url)
+    guard let uiImage = UIImage(data: data) else {
+      throw URLError(.cannotDecodeContentData)
+    }
+    return Image(uiImage: uiImage)
+      .accessibilityLabel(Text(label))
   }
 }
 
